@@ -12,6 +12,7 @@ from climetlab.sources.file import File
 
 __version__ = "0.1.0"
 
+
 class A1(Dataset):
     name = "Nordic public weather forecast dataset"
     home_page = "https://github.com/metno/maelstrom-a1"
@@ -32,10 +33,14 @@ class A1(Dataset):
     default_datelist = all_datelist
 
     # @normalize_args(size=["300MB", "5GB"], parameter=["air_temperature", "precipitation_amount"])
-    def __init__(self, size, parameter,
-            dates=None,
-            location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
-            pattern="{parameter}_{size}/{date}T00Z.nc"):
+    def __init__(
+        self,
+        size,
+        parameter,
+        dates=None,
+        location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
+        pattern="{parameter}_{size}/{date}T00Z.nc",
+    ):
         """
         Arguments:
             size (str): Datasize, one of "5GB" and "5TB"
@@ -55,27 +60,34 @@ class A1(Dataset):
         if not is_url:
             # Use data stored locally
             request = dict(size=self.size, parameter=self.parameter)
-            filenames = [location + pattern.format(date=date, **request) for date in self.dates]
+            filenames = [
+                location + pattern.format(date=date, **request) for date in self.dates
+            ]
 
             files = [File(f) for f in filenames if os.path.exists(f)]
             if len(files) == 0:
-                raise RuntimeError( f"No available files matching pattern '{location}{pattern}'" )
+                raise RuntimeError(
+                    f"No available files matching pattern '{location}{pattern}'"
+                )
 
             self.source = cml.load_source("multi", files, merger=Merger())
         else:
             # Download from the cloud
             request = dict(size=self.size, parameter=self.parameter, date=self.dates)
-            self.source = cml.load_source("url-pattern", location + pattern, request, merger=Merger())
+            self.source = cml.load_source(
+                "url-pattern", location + pattern, request, merger=Merger()
+            )
 
     def parse_dates(self, dates):
-        """ Converts dates """
+        """Converts dates"""
         if dates is None:
             dates = self.default_datelist
         for d in dates:
             if d not in self.all_datelist:
-                raise ValueError( f"Date {d} is not available")
+                raise ValueError(f"Date {d} is not available")
         dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
+
 
 class Merger:
     def __init__(self, engine="netcdf4", concat_dim="time", options=None):
@@ -84,5 +96,10 @@ class Merger:
         self.options = options if options is not None else {}
 
     def to_xarray(self, paths, **kwargs):
-        return xr.open_mfdataset( paths, engine=self.engine, concat_dim=self.concat_dim,
-                combine="nested", **self.options)
+        return xr.open_mfdataset(
+            paths,
+            engine=self.engine,
+            concat_dim=self.concat_dim,
+            combine="nested",
+            **self.options,
+        )
