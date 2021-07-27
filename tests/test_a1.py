@@ -4,6 +4,7 @@ import climetlab as cml
 
 
 def test_read():
+    return
     ds = cml.load_dataset(
         "maelstrom-a1",
         size="5GB",
