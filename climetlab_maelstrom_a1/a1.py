@@ -29,7 +29,13 @@ class A1(Dataset):
         "If you do not agree with such terms, do not download the data. "
     )
 
-    all_datelist = pd.date_range(start="2017-01-01", end="2020-12-31", freq="1D")
+    all_datelist = [
+        i.strftime("%Y-%m-%d")
+        for i in pd.date_range(start="2017-01-01", end="2019-03-01", freq="1D")
+    ] + [
+        i.strftime("%Y-%m-%d")
+        for i in pd.date_range(start="2019-03-06", end="2020-12-31", freq="1D")
+    ]
     default_datelist = all_datelist
 
     # @normalize_args(size=["300MB", "5GB"], parameter=["air_temperature", "precipitation_amount"])
