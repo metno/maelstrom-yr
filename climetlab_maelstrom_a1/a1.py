@@ -46,6 +46,7 @@ class A1(Dataset):
         dates=None,
         location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
         pattern="{parameter}_{size}/{date}T00Z.nc",
+        verbose=False,
     ):
         """
         Arguments:
@@ -54,23 +55,31 @@ class A1(Dataset):
             dates (list): Only extract these dates, list of "YYYY-MM-DD" strings
             location (str): Storage location (URL, or local file directory)
             pattern (str): Pattern for filenames
+            verbose (bool): Show debug statements if True
         """
         self.size = size
         self.parameter = parameter
+        self.verbose = verbose
+
+        is_url = location.find("://") >= 0
+        self.debug(f"Is this a URL dataset? {is_url}")
 
         if dates is None:
             dates = self.default_datelist
         self.dates = self.parse_dates(dates)
+        self.debug(f"Number of dates to load {len(self.dates)}")
 
-        is_url = location.find("://") >= 0
         if not is_url:
             # Use data stored locally
             request = dict(size=self.size, parameter=self.parameter)
             filenames = [
                 location + pattern.format(date=date, **request) for date in self.dates
             ]
+            filenames = [f for f in filenames if os.path.exists(f)]
+            self.debug(f"Number of files found {len(filenames)}:")
+            self.debug(f"{filenames}")
 
-            files = [File(f) for f in filenames if os.path.exists(f)]
+            files = [File(f) for f in filenames]
             if len(files) == 0:
                 raise RuntimeError(
                     f"No available files matching pattern '{location}{pattern}'"
@@ -80,19 +89,26 @@ class A1(Dataset):
         else:
             # Download from the cloud
             request = dict(size=self.size, parameter=self.parameter, date=self.dates)
+            self.debug(f"Request parameters {request}")
             self.source = cml.load_source(
                 "url-pattern", location + pattern, request, merger=Merger()
             )
 
-    def parse_dates(self, dates):
-        """Converts dates"""
+    @staticmethod
+    def parse_dates(dates):
+        """Reads dates (e.g. from pandas, or YYYY-MM-DD) and converts them to YYYYMMDD"""
+        dates = DateListNormaliser("%Y-%m-%d")(dates)
         if dates is None:
-            dates = self.default_datelist
+            dates = A1.default_datelist
         for d in dates:
-            if d not in self.all_datelist:
+            if d not in A1.all_datelist:
                 raise ValueError(f"Date {d} is not available")
         dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
+
+    def debug(self, message):
+        if self.verbose:
+            print("DEBUG: ", message)
 
 
 class Merger:
