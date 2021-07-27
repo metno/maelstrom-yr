@@ -2,34 +2,21 @@
 
 A dataset plugin for climetlab for the dataset maelstrom-a1.
 
-
-Features
---------
-
-In this README is a description of how to get the maelstrom-a1.
-
 ## Datasets description
 
-There are two datasets: 
+Contains gridded weather forecasts and analyses (truth) for the Nordics.
 
-### 1 : `a1`
+## Using climetlab to access the data
 
+The data can be loaded by the climetlab package (https://github.com/ecmwf/climetlab). The dataset has the
+following arguments:
+- size: Which dataset to load (currently 5GB is supported, but in the future a 5TB dataset will be added)
+- parameter: Which predictand to load (currently "air_temperature" is supported)
+- dates: If left blank, the whole dataset is loaded. Otherwise, provide a list of dates in "YYYY-MM-DD"
+format to load a subset
 
-### 2
-TODO
-
-
-## Using climetlab to access the data (supports grib, netcdf and zarr)
-
-See the demo notebooks here (https://github.com/ecmwf-lab/climetlab_maelstrom_a1/notebooks
-
-https://github.com/ecmwf-lab/climetlab_maelstrom_a1/notebooks/demo_a1.ipynb
-[nbviewer] (https://nbviewer.jupyter.org/github/climetlab_maelstrom_a1/blob/main/notebooks/demo_a1.ipynb) 
-[colab] (https://colab.research.google.com/github/climetlab_maelstrom_a1/blob/main/notebooks/demo_a1.ipynb) 
-
-The climetlab python package allows easy access to the data with a few lines of code such as:
+Here is an example of how to load the data:
 ```
-
 !pip install climetlab climetlab_maelstrom_a1
 import climetlab as cml
 ds = cml.load_dataset("maelstrom-a1", size="5GB", parameter="air_temperature", dates=['2020-06-29'])
