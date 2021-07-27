@@ -7,7 +7,7 @@ import climetlab as cml
 import pandas as pd
 import xarray as xr
 from climetlab import Dataset
-from climetlab.normalize import DateListNormaliser, normalize_args
+from climetlab.normalize import DateListNormaliser
 from climetlab.sources.file import File
 
 __version__ = "0.1.0"
