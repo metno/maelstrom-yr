@@ -69,6 +69,11 @@ class A1(Dataset):
         self.dates = self.parse_dates(dates)
         self.debug(f"Number of dates to load {len(self.dates)}")
 
+        options = {
+            "concat_characters": False,
+            "data_vars": ["time", "predictors", "target"],
+        }
+
         if not is_url:
             # Use data stored locally
             request = dict(size=self.size, parameter=self.parameter)
@@ -85,13 +90,18 @@ class A1(Dataset):
                     f"No available files matching pattern '{location}{pattern}'"
                 )
 
-            self.source = cml.load_source("multi", files, merger=Merger())
+            self.source = cml.load_source(
+                "multi", files, merger=Merger(options=options)
+            )
         else:
             # Download from the cloud
             request = dict(size=self.size, parameter=self.parameter, date=self.dates)
             self.debug(f"Request parameters {request}")
             self.source = cml.load_source(
-                "url-pattern", location + pattern, request, merger=Merger()
+                "url-pattern",
+                location + pattern,
+                request,
+                merger=Merger(options=options),
             )
 
     @staticmethod
@@ -112,7 +122,7 @@ class A1(Dataset):
 
 
 class Merger:
-    def __init__(self, engine="netcdf4", concat_dim="time", options=None):
+    def __init__(self, engine="netcdf4", concat_dim="record", options=None):
         self.engine = engine
         self.concat_dim = concat_dim
         self.options = options if options is not None else {}
