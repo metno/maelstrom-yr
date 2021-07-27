@@ -32,6 +32,6 @@ The climetlab python package allows easy access to the data with a few lines of 
 
 !pip install climetlab climetlab_maelstrom_a1
 import climetlab as cml
-ds = cml.load_dataset("maelstrom-a1", size="5GB", "air_temperature", dates=['2020-06-29'])
+ds = cml.load_dataset("maelstrom-a1", size="5GB", parameter="air_temperature", dates=['2020-06-29'])
 ds.to_xarray()
 ```
