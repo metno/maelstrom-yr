@@ -2,14 +2,13 @@
 from __future__ import annotations
 
 import os
-import xarray as xr
-import pandas as pd
 
 import climetlab as cml
+import pandas as pd
+import xarray as xr
 from climetlab import Dataset
-from climetlab.normalize import normalize_args
+from climetlab.normalize import DateListNormaliser, normalize_args
 from climetlab.sources.file import File
-from climetlab.normalize import DateListNormaliser
 
 __version__ = "0.1.0"
 
