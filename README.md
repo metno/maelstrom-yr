@@ -1,6 +1,7 @@
 ## maelstrom-a1
 
-A dataset plugin for climetlab for the dataset maelstrom-a1.
+A dataset plugin for climetlab for the dataset maelstrom-a1. Check out this
+[notebook](https://github.com/metno/maelstrom-a1/blob/main/notebooks/demo_a1.ipynb).
 
 ## Datasets description
 
