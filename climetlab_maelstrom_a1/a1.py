@@ -113,7 +113,8 @@ class A1(Dataset):
             dates = A1.default_datelist
         for d in dates:
             if d not in A1.all_datelist:
-                raise ValueError(f"Date {d} is not available")
+                print(f"Warning: Date {d} is not available")
+        dates = [d for d in dates if d in A1.all_datelist]
         dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
 
