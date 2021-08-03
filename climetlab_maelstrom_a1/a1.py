@@ -72,6 +72,7 @@ class A1(Dataset):
         options = {
             "concat_characters": False,
             "data_vars": ["time", "predictors", "target"],
+            "drop_variables": ["leadtime_predictor"],
         }
 
         if not is_url:
