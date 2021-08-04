@@ -70,8 +70,10 @@ class A1(Dataset):
         self.debug(f"Number of dates to load {len(self.dates)}")
 
         options = {
+            # Needed to deal with char dimension in metadata variables
             "concat_characters": False,
             "data_vars": ["time", "predictors", "target"],
+            # Without this, fails with pandas 1.3.1
             "drop_variables": ["leadtime_predictor"],
         }
 
