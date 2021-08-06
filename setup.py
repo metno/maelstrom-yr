@@ -42,7 +42,6 @@ setuptools.setup(
     entry_points={
         "climetlab.datasets": [
             "maelstrom-yr = climetlab_maelstrom_yr.yr:Yr",
-            # "maelstrom-yr-other-dataset = climetlab_maelstrom_yr.other_dataset:OtherDatasetClass",
         ]
     },
     keywords="meteorology",
