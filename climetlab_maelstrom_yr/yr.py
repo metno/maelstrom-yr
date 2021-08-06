@@ -10,12 +10,10 @@ from climetlab import Dataset
 from climetlab.normalize import DateListNormaliser
 from climetlab.sources.file import File
 
-__version__ = "0.1.0"
 
-
-class A1(Dataset):
+class Yr(Dataset):
     name = "Nordic public weather forecast dataset"
-    home_page = "https://github.com/metno/maelstrom-a1"
+    home_page = "https://github.com/metno/maelstrom-yr"
     licence = "-"
     documentation = "-"
     citation = (
@@ -25,7 +23,7 @@ class A1(Dataset):
     )
     terms_of_use = (
         "By downloading data from this dataset, you agree to the terms and conditions defined at "
-        "https://github.com/metno/maelstrom_a1/LICENSE. "
+        "https://github.com/metno/maelstrom_yr/LICENSE. "
         "If you do not agree with such terms, do not download the data. "
     )
 
@@ -112,11 +110,11 @@ class A1(Dataset):
         """Reads dates (e.g. from pandas, or YYYY-MM-DD) and converts them to YYYYMMDD"""
         dates = DateListNormaliser("%Y-%m-%d")(dates)
         if dates is None:
-            dates = A1.default_datelist
+            dates = Yr.default_datelist
         for d in dates:
-            if d not in A1.all_datelist:
+            if d not in Yr.all_datelist:
                 print(f"Warning: Date {d} is not available")
-        dates = [d for d in dates if d in A1.all_datelist]
+        dates = [d for d in dates if d in Yr.all_datelist]
         dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
 

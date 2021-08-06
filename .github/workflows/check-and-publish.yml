@@ -57,7 +57,7 @@ jobs:
 
       - run: pip install climetlab
 
-      - name: Installing climetlab_maelstrom_a1
+      - name: Installing climetlab_maelstrom_yr
         run: pip install -e .
 
       - name: Tests

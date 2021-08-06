@@ -2,7 +2,6 @@
 
 import climetlab as cml
 import pandas as pd
-
 from climetlab_maelstrom_a1.a1 import A1
 
 

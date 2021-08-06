@@ -12,7 +12,7 @@ def read(fname):
     return io.open(file_path, encoding="utf-8").read()
 
 
-package_name = "climetlab_maelstrom_a1"
+package_name = "climetlab_maelstrom_yr"
 
 version = None
 init_py = os.path.join(package_name.replace("-", "_"), "__init__.py")
@@ -27,12 +27,12 @@ extras_require = {}
 setuptools.setup(
     name=package_name,
     version=version,
-    description="A dataset plugin for climetlab for the dataset maelstrom-a1/a1.",
+    description="A dataset plugin for climetlab for the dataset maelstrom-yr/yr.",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     author="Thomas Nipen",
     author_email="thomasn@met.no",
-    url="https://github.com/metno/climetlab-maelstrom-a1",
+    url="https://github.com/metno/climetlab-maelstrom-yr",
     license="Apache License Version 2.0",
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -41,8 +41,8 @@ setuptools.setup(
     zip_safe=True,
     entry_points={
         "climetlab.datasets": [
-            "maelstrom-a1 = climetlab_maelstrom_a1.a1:A1",
-            # "maelstrom-a1-other-dataset = climetlab_maelstrom_a1.other_dataset:OtherDatasetClass",
+            "maelstrom-yr = climetlab_maelstrom_yr.yr:Yr",
+            # "maelstrom-yr-other-dataset = climetlab_maelstrom_yr.other_dataset:OtherDatasetClass",
         ]
     },
     keywords="meteorology",

@@ -1,7 +1,7 @@
-## maelstrom-a1
+## maelstrom-yr
 
-A dataset plugin for climetlab for the dataset maelstrom-a1. Check out this
-[notebook](https://github.com/metno/maelstrom-a1/blob/main/notebooks/demo_a1.ipynb).
+A dataset plugin for climetlab for the dataset maelstrom-yr. Check out this
+[notebook](https://github.com/metno/maelstrom-yr/blob/main/notebooks/demo_yr.ipynb).
 
 ## Datasets description
 
@@ -21,8 +21,8 @@ format to load a subset
 
 Here is an example of how to load the data:
 ```
-!pip install climetlab climetlab_maelstrom_a1
+!pip install climetlab climetlab_maelstrom_yr
 import climetlab as cml
-ds = cml.load_dataset("maelstrom-a1", size="5GB", parameter="air_temperature", dates=['2020-06-29'])
+ds = cml.load_dataset("maelstrom-yr", size="5GB", parameter="air_temperature", dates=['2020-06-29'])
 ds.to_xarray()
 ```
