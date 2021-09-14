@@ -1,5 +1,8 @@
 ## maelstrom-yr
 
+[![PyPI version](https://badge.fury.io/py/climetlab-maelstrom-yr.svg)](https://badge.fury.io/py/climetlab-maelstrom-yr)
+[![workflow](https://github.com/metno/maelstrom-yr/workflows/build/badge.svg)](https://github.com/metno/maelstrom-yr/actions)
+
 A dataset plugin for climetlab for the dataset maelstrom-yr. Check out this
 [notebook](https://github.com/metno/maelstrom-yr/blob/main/notebooks/demo_yr.ipynb).
 
