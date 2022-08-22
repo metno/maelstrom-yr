@@ -21,9 +21,6 @@ for line in read(init_py).split("\n"):
         version = line.split("=")[-1].strip()[1:-1]
 assert version
 
-
-extras_require = {}
-
 setuptools.setup(
     name=package_name,
     version=version,
@@ -35,14 +32,37 @@ setuptools.setup(
     url="https://github.com/metno/climetlab-maelstrom-yr",
     license="Apache License Version 2.0",
     packages=setuptools.find_packages(),
+    install_requires=[
+        "argparse",
+        "datetime",
+        "climetlab>=0.5.6",
+        "future",
+        "gridpp==0.6.0.dev16",
+        "matplotlib",
+        "jsonschema",
+        "netCDF4<1.6.0",
+        "nose",
+        "numpy",
+        "psutil",
+        "pyyaml",
+        "requests",
+        "scipy",
+        "six",
+        "tensorflow-gpu",
+        "tqdm",
+    ],
+    extras_require={
+        "test": ["coverage", "pep8"],
+    },
     include_package_data=True,
-    install_requires=["climetlab>=0.5.6"],
-    extras_require=extras_require,
     zip_safe=True,
     entry_points={
         "climetlab.datasets": [
             "maelstrom-yr = climetlab_maelstrom_yr.yr:Yr",
-        ]
+        ],
+        "console_scripts": [
+            "maelstrom-train=maelstrom:main",
+        ],
     },
     keywords="meteorology",
     classifiers=[

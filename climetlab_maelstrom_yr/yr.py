@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import glob
 
 import climetlab as cml
 import pandas as pd
@@ -29,10 +30,10 @@ class Yr(Dataset):
 
     all_datelist = [
         i.strftime("%Y-%m-%d")
-        for i in pd.date_range(start="2017-01-01", end="2019-03-01", freq="1D")
+        for i in pd.date_range(start="2020-03-01", end="2021-02-28", freq="1D")
     ] + [
         i.strftime("%Y-%m-%d")
-        for i in pd.date_range(start="2019-03-06", end="2020-12-31", freq="1D")
+        for i in pd.date_range(start="2021-03-01", end="2022-02-28", freq="1D")
     ]
     default_datelist = all_datelist
 
@@ -43,7 +44,7 @@ class Yr(Dataset):
         parameter,
         dates=None,
         location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
-        pattern="{parameter}_{size}/{date}T00Z.nc",
+        pattern="{parameter}/{size}/{date}T09Z.nc",
         verbose=False,
     ):
         """
@@ -70,17 +71,17 @@ class Yr(Dataset):
         options = {
             # Needed to deal with char dimension in metadata variables
             "concat_characters": False,
-            "data_vars": ["time", "predictors", "target"],
+            "data_vars": ["time", "predictors", "target_mean"],
             # Without this, fails with pandas 1.3.1
-            "drop_variables": ["leadtime_predictor"],
+            "drop_variables": ["static_predictors", "target_std"],
         }
 
         if not is_url:
             # Use data stored locally
             request = dict(size=self.size, parameter=self.parameter)
-            filenames = [
-                location + pattern.format(date=date, **request) for date in self.dates
-            ]
+            filenames = list()
+            for date in self.dates:
+                filenames += glob.glob(location + pattern.format(date=date, **request))
             filenames = [f for f in filenames if os.path.exists(f)]
             self.debug(f"Number of files found {len(filenames)}:")
             self.debug(f"{filenames}")
