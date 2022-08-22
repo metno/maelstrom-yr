@@ -1,0 +1,133 @@
+training:
+    trainer:
+        type: keras
+    optimizer:
+        type: adam
+        learning_rate:
+            type: piecewise
+            boundaries: [640] # Number of samples (not epochs)
+            values: [1.0e-2, 1.0e-3]
+    num_epochs: 100
+    validation_frequency: 4 file
+loader:
+    type: file
+    filenames: [ "data/air_temperature/5TB/2020*T*Z.nc", "data/air_temperature/5TB/20210[12]*T*Z.nc"]
+
+    # normalization: "data/air_temperature/normalization.yml"
+    quick_metadata: True
+    cache_size: 2
+    patch_size: 256
+    predict_diff: True
+    batch_size: 1
+    prefetch: 1
+    num_parallel_calls: 1
+    debug: True
+    extra_features:
+        - type: x
+        - type: y
+loader_validation:
+    type: file
+    # 24 validation dates, mixing the different months and init times
+    filenames: ["data/air_temperature/5TB/20210301T*Z.nc",
+                "data/air_temperature/5TB/20210315T*Z.nc",
+                "data/air_temperature/5TB/20210402T*Z.nc",
+                "data/air_temperature/5TB/20210416T*Z.nc",
+                "data/air_temperature/5TB/20210501T*Z.nc",
+                "data/air_temperature/5TB/20210515T*Z.nc",
+                "data/air_temperature/5TB/20210602T*Z.nc",
+                "data/air_temperature/5TB/20210616T*Z.nc",
+                "data/air_temperature/5TB/20210701T*Z.nc",
+                "data/air_temperature/5TB/20210715T*Z.nc",
+                "data/air_temperature/5TB/20210802T*Z.nc",
+                "data/air_temperature/5TB/20210816T*Z.nc",
+                "data/air_temperature/5TB/20210901T*Z.nc",
+                "data/air_temperature/5TB/20210915T*Z.nc",
+                "data/air_temperature/5TB/20211002T*Z.nc",
+                "data/air_temperature/5TB/20211016T*Z.nc",
+                "data/air_temperature/5TB/20211101T*Z.nc",
+                "data/air_temperature/5TB/20211115T*Z.nc",
+                "data/air_temperature/5TB/20211202T*Z.nc",
+                "data/air_temperature/5TB/20211216T*Z.nc",
+                "data/air_temperature/5TB/20210101T*Z.nc",
+                "data/air_temperature/5TB/20210115T*Z.nc",
+                "data/air_temperature/5TB/20210202T*Z.nc",
+                "data/air_temperature/5TB/20210216T*Z.nc"
+    ]
+    # Normalization takes 32 seconds
+    # normalization: "data/air_temperature/normalization.yml"
+    quick_metadata: True
+    cache_size: 200
+    x_range: 300:1068
+    y_range: 550:1062
+    patch_size: 256
+    predict_diff: True
+    batch_size: 1
+    prefetch: 1
+    num_parallel_calls: 1
+    debug: True
+    extra_features:
+        - type: x
+        - type: y
+loader_test:
+    type: file
+    filenames: ["data/air_temperature/5TB/20210[3-9]*T*Z.nc",
+                "data/air_temperature/5TB/20211*T*Z.nc",
+                "data/air_temperature/5TB/2022*T*Z.nc"]
+    quick_metadata: True
+    cache_size: 0
+    patch_size: 256
+    predict_diff: True
+    batch_size: 1
+    prefetch: 1
+    num_parallel_calls: 1
+    debug: True
+    extra_features:
+        - type: x
+        - type: y
+models:
+    - type: BasicBenchmark
+      name: official
+      leadtime_dependent: False
+      neighbourhood_size: 3
+      filter_sizes: [12, 5, 5]
+    - type: BasicBenchmark
+      name: official_l5
+      leadtime_dependent: False
+      neighbourhood_size: 3
+      filter_sizes: [12, 5, 5, 5, 5]
+    - type: BasicBenchmark
+      name: official_l5_r5
+      leadtime_dependent: False
+      neighbourhood_size: 5
+      filter_sizes: [12, 5, 5, 5, 5]
+    - type: BasicBenchmark
+      name: official_lt
+      leadtime_dependent: True
+      neighbourhood_size: 3
+      filter_sizes: [12, 5, 5]
+    - type: BasicBenchmark
+      name: official_norm
+      leadtime_dependent: False
+      neighbourhood_size: 3
+      filter_sizes: [12, 5, 5]
+      batch_normalization: True
+    - type: Regression
+      name: regression
+    - type: Regression
+      name: regression_lt
+      leadtime_dependent: True
+    - type: Unet
+      name: unet
+      levels: 3
+      with_leadtime: False
+    - type: Unet
+      name: unet_lt
+      with_leadtime: True
+output:
+    quantiles: [0.5, 0.1, 0.9]
+loss:
+    type: quantile_score
+evaluators:
+    - type: aggregator
+tensorflow:
+    num_threads: 2

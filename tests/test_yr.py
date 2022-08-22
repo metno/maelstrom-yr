@@ -7,24 +7,25 @@ from climetlab_maelstrom_yr.yr import Yr
 
 
 def test_read():
-    return
     ds = cml.load_dataset(
         "maelstrom-yr",
         size="5GB",
-        dates=["2020-06-26"],
+        dates=["2020-03-01"],
         parameter="air_temperature",
+        location="files/",
     )
-    ds.to_xarray()
+    q = ds.to_tfdataset()
 
 
 def test_parse_dates():
-    expected = ["20170101", "20170102", "20170103"]
-    pd_dates = pd.date_range(start="2017-01-01", end="2017-01-03", freq="1D")
+    expected = ["20210101", "20210102", "20210103"]
+    pd_dates = pd.date_range(start="2021-01-01", end="2021-01-03", freq="1D")
     assert Yr.parse_dates(pd_dates) == expected
-    assert Yr.parse_dates(["2017-01-01", "2017-01-02", "2017-01-03"]) == expected
+    assert Yr.parse_dates(["2021-01-01", "2021-01-02", "2021-01-03"]) == expected
 
 
 if __name__ == "__main__":
     from climetlab.testing import main
 
+    test_read()
     main(globals())

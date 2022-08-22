@@ -10,6 +10,7 @@ import xarray as xr
 from climetlab import Dataset
 from climetlab.normalize import DateListNormaliser
 from climetlab.sources.file import File
+import maelstrom
 
 
 class Yr(Dataset):
@@ -37,14 +38,19 @@ class Yr(Dataset):
     ]
     default_datelist = all_datelist
 
-    # @normalize_args(size=["300MB", "5GB"], parameter=["air_temperature", "precipitation_amount"])
     def __init__(
         self,
         size,
         parameter,
         dates=None,
         location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
-        pattern="{parameter}/{size}/{date}T09Z.nc",
+        pattern="{parameter}/{size}/{date}T{hour}Z.nc",
+        x_range=None,
+        y_range=None,
+        limit_leadtimes=None,
+        limit_predictores=None,
+        probabilistic_target=False,
+        normalization=None,
         verbose=False,
     ):
         """
@@ -56,6 +62,12 @@ class Yr(Dataset):
             pattern (str): Pattern for filenames
             verbose (bool): Show debug statements if True
         """
+        if size not in ["300MB", "5GB"]:
+            raise ValueError("invalid size '{size}'")
+
+        if parameter not in ["air_temperature", "precipitation_amount"]:
+            raise ValueError("invalid parameter '{parameter}'")
+
         self.size = size
         self.parameter = parameter
         self.verbose = verbose
@@ -68,7 +80,7 @@ class Yr(Dataset):
         self.dates = self.parse_dates(dates)
         self.debug(f"Number of dates to load {len(self.dates)}")
 
-        options = {
+        x_array_options = {
             # Needed to deal with char dimension in metadata variables
             "concat_characters": False,
             "data_vars": ["time", "predictors", "target_mean"],
@@ -76,12 +88,16 @@ class Yr(Dataset):
             "drop_variables": ["static_predictors", "target_std"],
         }
 
+        tf_options = {
+        }
+
         if not is_url:
             # Use data stored locally
             request = dict(size=self.size, parameter=self.parameter)
             filenames = list()
             for date in self.dates:
-                filenames += glob.glob(location + pattern.format(date=date, **request))
+                hour = self.get_hour_str(date)
+                filenames += glob.glob(location + pattern.format(date=date, hour=hour, **request))
             filenames = [f for f in filenames if os.path.exists(f)]
             self.debug(f"Number of files found {len(filenames)}:")
             self.debug(f"{filenames}")
@@ -93,17 +109,18 @@ class Yr(Dataset):
                 )
 
             self.source = cml.load_source(
-                "multi", files, merger=Merger(options=options)
+                "multi", files, merger=Merger(x_array_options=x_array_options, tf_options=tf_options)
             )
         else:
             # Download from the cloud
-            request = dict(size=self.size, parameter=self.parameter, date=self.dates)
+            hour = [self.get_hour_str(date) for date in self.dates]
+            request = dict(size=self.size, parameter=self.parameter, date=self.dates, hour=hours)
             self.debug(f"Request parameters {request}")
             self.source = cml.load_source(
                 "url-pattern",
                 location + pattern,
                 request,
-                merger=Merger(options=options),
+                merger=Merger(x_array_options=x_array_options, tf_options=tf_options),
             )
 
     @staticmethod
@@ -119,16 +136,31 @@ class Yr(Dataset):
         dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
 
+    def get_hour_str(self, date_str):
+        """Get corresponding forecast initialization hour for a given date (YYYYMMDD)"""
+        date = int(date_str)
+        day = date % 100
+        if day % 4 == 1:
+            hour = 3
+        elif day % 4 == 2:
+            hour = 9
+        elif day % 4 == 3:
+            hour = 15
+        elif day % 4 == 0:
+            hour = 21
+        return "%02d" % hour
+
     def debug(self, message):
         if self.verbose:
             print("DEBUG: ", message)
 
 
 class Merger:
-    def __init__(self, engine="netcdf4", concat_dim="record", options=None):
+    def __init__(self, engine="netcdf4", concat_dim="record", x_array_options={}, tf_options={}):
         self.engine = engine
         self.concat_dim = concat_dim
-        self.options = options if options is not None else {}
+        self.x_array_options = x_array_options
+        self.tf_options = tf_options
 
     def to_xarray(self, paths, **kwargs):
         return xr.open_mfdataset(
@@ -136,5 +168,10 @@ class Merger:
             engine=self.engine,
             concat_dim=self.concat_dim,
             combine="nested",
-            **self.options,
+            **self.x_array_options,
         )
+
+    def to_tfdataset(self, paths, **kwargs):
+        """Returns a tensorflow dataset object"""
+        loader = maelstrom.loader.FileLoader(paths)
+        return loader.get_dataset()
