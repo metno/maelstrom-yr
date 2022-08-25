@@ -27,17 +27,17 @@ import maelstrom
 
 def main():
     # fmt: off
-    parser = argparse.ArgumentParser()
-    parser.add_argument( "--config", type=maelstrom.load_yaml, help="Configuration file containing output paths, etc", required=True, nargs="*",)
-    parser.add_argument( "-j", type=int, help="Number of threads to train with", dest="num_threads",)
-    parser.add_argument( "--hardware", default="cpu", help="Run on GPUS?", choices=["cpu", "gpu", "multigpu"],)
+    parser = argparse.ArgumentParser("Command line program for running experiments on MAELSTROM application 1")
+    parser.add_argument( "--config", type=maelstrom.load_yaml, help="YAML configuration file", required=True, nargs="*",)
+    parser.add_argument( "-j", type=int, help="Number of cpu threads to run with", dest="num_threads",)
+    parser.add_argument( "--hardware", default="cpu", help="What hardware to train models on?", choices=["cpu", "gpu", "multigpu"],)
     parser.add_argument( "-m", help="Only run these models", dest="subset_models", nargs="*", required=True,)
-    parser.add_argument( "-w", help="Print weights of the model", dest="print_weights", action="store_true",)
-    parser.add_argument( "-o", default="results/%N_%T", help="Output folder", dest="output_folder",)
+    parser.add_argument( "-w", help="Print weights of the model at the end of training", dest="print_weights", action="store_true",)
+    parser.add_argument( "-o", default="results/%N_%T", help="Output folder where results will be saved", dest="output_folder",)
     parser.add_argument( "--seed", type=int, help="Random seed",)
-    parser.add_argument( "--load_weights", help="Initialize with model weights found in this directory")
-    parser.add_argument( "--train", default=1, type=int, help="Enable training?", dest="do_train", choices=[0, 1])
-    parser.add_argument( "--test", default=1, type=int, help="Enable testing?", dest="do_test", choices=[0, 1])
+    parser.add_argument( "--load_weights", help="Initialize model with pretrained weights found in this directory")
+    parser.add_argument( "--train", default=1, type=int, help="Run training?", dest="do_train", choices=[0, 1])
+    parser.add_argument( "--test", default=1, type=int, help="Run testing?", dest="do_test", choices=[0, 1])
     args = parser.parse_args()
     # fmt: on
 
