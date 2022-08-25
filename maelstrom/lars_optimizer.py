@@ -14,10 +14,9 @@
 
 """Layer-wise adaptive rate scaling optimizer."""
 import re
-from typing import Text, List, Optional
+from typing import List, Optional, Text
 
 import tensorflow as tf
-
 
 # pylint: disable=protected-access
 

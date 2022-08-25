@@ -3,16 +3,17 @@ import copy
 import datetime
 import glob
 import json
-import numpy as np
 import os
 import sys
 import time
+
+import numpy as np
 import tqdm
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
-from tensorflow import keras
 import tensorflow.keras.backend as K
+from tensorflow import keras
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "0"
 
@@ -440,13 +441,13 @@ def testing(config, loader, quantiles, trainer, output_folder, model_name):
     count = 0
 
     if 0:
-        """ Using keras.predict and prefetching
-        
-            The advantage is that prefetching will work automatically
-            However, prediction is slow when patching is on
+        """Using keras.predict and prefetching
 
-            This code doesn't currently work, since for a given batch we don't know what forecast
-            reference time we are at. Ideally, the data should be batched across patches.
+        The advantage is that prefetching will work automatically
+        However, prediction is slow when patching is on
+
+        This code doesn't currently work, since for a given batch we don't know what forecast
+        reference time we are at. Ideally, the data should be batched across patches.
         """
         dataset = loader.get_dataset()
         forecast_reference_times = loader.times
@@ -467,7 +468,9 @@ def testing(config, loader, quantiles, trainer, output_folder, model_name):
 
             if first_batch_in_file:
                 file_index = batch // samples_per_file
-                forecast_reference_time = forecast_reference_times[batch // samples_per_file]
+                forecast_reference_time = forecast_reference_times[
+                    batch // samples_per_file
+                ]
                 date, hour = maelstrom.util.unixtime_to_date(forecast_reference_time)
                 print(f"Processing {date:08d}T{hour:02d}Z ({file_index+1}/{num_files})")
 
@@ -505,8 +508,7 @@ def testing(config, loader, quantiles, trainer, output_folder, model_name):
 
         results["test_loss"] = total_loss
     elif 1:
-        """ Calling predict on each sample
-        """
+        """Calling predict on each sample"""
         num = len(loader)
         for i in range(num):
             ss_time = time.time()

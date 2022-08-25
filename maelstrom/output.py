@@ -1,10 +1,11 @@
+import datetime
+import os
+import re
+
 import gridpp
 import netCDF4
 import numpy as np
-import os
-import re
 import scipy.stats
-import datetime
 
 import maelstrom
 

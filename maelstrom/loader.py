@@ -1,23 +1,25 @@
 import collections
 import copy
 import glob
-import gridpp
 import json
 import multiprocessing
-import netCDF4
 import numbers
-import numpy as np
 import os
 import re
 import sys
-import tensorflow as tf
 import time
+
+import gridpp
+import netCDF4
+import numpy as np
+import tensorflow as tf
 import tqdm
 import yaml
 
+import maelstrom
+
 # import horovod.tensorflow as hvd
 
-import maelstrom
 
 
 def get(args, sample=None):
@@ -149,7 +151,9 @@ class DataLoader:
             raise ValueError("predictor_names must be a list of strings")
 
         if batch_size != 1:
-            raise ValueError("batch size other than 1 is not currently tested well enough...")
+            raise ValueError(
+                "batch size other than 1 is not currently tested well enough..."
+            )
 
         self.num_files = num_files
         self.times = times
@@ -271,7 +275,9 @@ class DataLoader:
         """Which forecast reference time does this batch represent?"""
         raise NotImplementedError()
 
-        batches_per_file = self.num_patches_per_sample * self.num_samples_per_file // self.batch_size
+        batches_per_file = (
+            self.num_patches_per_sample * self.num_samples_per_file // self.batch_size
+        )
         file_index = batch // batches_per_file
         return self.times[batch]
 
@@ -488,10 +494,10 @@ class DataLoader:
         d["Num targets"] = self.num_targets
         d["Predictors"] = list()
         if self.patch_size is None:
-            d["Sample size (MB)"] = self.get_data_size() / 1024 ** 2 / self.num_samples
+            d["Sample size (MB)"] = self.get_data_size() / 1024**2 / self.num_samples
         else:
-            d["Patch size (MB)"] = self.get_data_size() / 1024 ** 2 / self.num_patches
-        d["Total size (GB)"] = self.get_data_size() / 1024 ** 3
+            d["Patch size (MB)"] = self.get_data_size() / 1024**2 / self.num_patches
+        d["Total size (GB)"] = self.get_data_size() / 1024**3
         if self.predictor_names is not None:
             for q in self.predictor_names:
                 d["Predictors"] += [str(q)]
@@ -787,7 +793,7 @@ class FileLoader(DataLoader):
         """This function needs to know what predictors/static predictors to load"""
         s_time = time.time()
         filename = self.filenames[index]
-        mem_usage = maelstrom.util.get_memory_usage() / 1024 ** 3
+        mem_usage = maelstrom.util.get_memory_usage() / 1024**3
         self.write_debug(f"Loading {filename}: {mem_usage:.1f} GB memory")
         with netCDF4.Dataset(filename, "r") as ifile:
 

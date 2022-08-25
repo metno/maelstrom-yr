@@ -1,10 +1,11 @@
-from tensorflow import keras
 import copy
 import inspect
-import numpy as np
 import sys
-import tensorflow as tf
 import time
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
 
 import maelstrom
 
@@ -50,7 +51,7 @@ def get(input_shape, num_outputs, **model_args):
 
 
 class Model(keras.Model):
-    """ Abstract model class
+    """Abstract model class
 
     Example use:
         model = maelstrom.models.TestModel(...)

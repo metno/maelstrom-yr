@@ -4,12 +4,13 @@ This module helps to parse contents from NetCDF files, including its grid and va
 to read the dimensions and variables of a NetCDF file and rearrange it into a consistent output.
 """
 
+import os
+import re
+import time
+
+import gridpp
 import netCDF4
 import numpy as np
-import gridpp
-import re
-import os
-import time
 
 
 def has(filename, variable):

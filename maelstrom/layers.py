@@ -1,9 +1,10 @@
-from tensorflow import keras
 import copy
 import inspect
-import numpy as np
 import sys
+
+import numpy as np
 import tensorflow as tf
+from tensorflow import keras
 
 """This module contains custom layers that can be used together with Keras and tensorflow"""
 

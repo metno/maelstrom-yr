@@ -1,10 +1,11 @@
 import copy
 import json
-import netCDF4
-import numpy as np
 import queue
 import threading
 import time
+
+import netCDF4
+import numpy as np
 from tensorflow import keras
 
 import maelstrom
@@ -183,7 +184,7 @@ class Timing(keras.callbacks.Callback):
 class Convergence(keras.callbacks.Callback):
     """Write (training and test) loss information to text file
 
-       Deprecated. Use Validation instead
+    Deprecated. Use Validation instead
     """
 
     def __init__(
@@ -380,7 +381,7 @@ class Validation(keras.callbacks.Callback):
         results_logs["epoch"] = epoch
         results_logs["batch"] = batch
         results_logs["acc_time"] = curr_acc_time
-        results_logs["size_gb"] = self.acc_size / 1024 ** 3
+        results_logs["size_gb"] = self.acc_size / 1024**3
         self.results += [results_logs]
 
         self.count += 1

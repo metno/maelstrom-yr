@@ -1,7 +1,8 @@
-import numpy as np
 import sys
-import tensorflow as tf
 import time
+
+import numpy as np
+import tensorflow as tf
 import tqdm
 
 

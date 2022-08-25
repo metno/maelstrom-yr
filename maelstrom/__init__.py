@@ -1,9 +1,9 @@
-import yaml
 import collections
 import os
 import pkgutil
-import numpy as np
 
+import numpy as np
+import yaml
 
 __version__ = "0.1.0"
 

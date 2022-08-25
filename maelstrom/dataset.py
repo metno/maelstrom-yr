@@ -1,14 +1,16 @@
-import os
 import glob
-import time
-import netCDF4
-import tqdm
-import numpy as np
-import tensorflow as tf
-import yaml
 import json
 import multiprocessing
+import os
+import time
+
 import gridpp
+import netCDF4
+import numpy as np
+import tensorflow as tf
+import tqdm
+import yaml
+
 import maelstrom
 
 
@@ -321,7 +323,7 @@ class Dataset(tf.keras.utils.Sequence):
         d["Num predictors"] = self.num_predictors
         d["Predictors"] = list()
         total_size = np.product(self.predictors.shape) + np.product(self.targets.shape)
-        d["Total size (GB)"] = total_size * 4 / 1024 ** 3
+        d["Total size (GB)"] = total_size * 4 / 1024**3
         if self.predictor_names is not None:
             for q in self.predictor_names:
                 d["Predictors"] += [str(q)]

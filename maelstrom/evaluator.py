@@ -1,5 +1,6 @@
-import maelstrom
 import numpy as np
+
+import maelstrom
 
 
 class Evaluator:
