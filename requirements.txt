@@ -6,7 +6,7 @@ netCDF4<1.6.0
 numpy
 pyyaml
 scipy
-tensorflow-gpu
+tensorflow
 tqdm
 wheel>=0.22
 PyYAML

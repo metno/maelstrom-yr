@@ -48,7 +48,7 @@ setuptools.setup(
         "requests",
         "scipy",
         "six",
-        "tensorflow-gpu",
+        "tensorflow",
         "tqdm",
     ],
     extras_require={
