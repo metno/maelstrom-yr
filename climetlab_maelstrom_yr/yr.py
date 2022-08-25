@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import os
 import glob
+import os
 
 import climetlab as cml
 import pandas as pd
@@ -10,6 +10,7 @@ import xarray as xr
 from climetlab import Dataset
 from climetlab.normalize import DateListNormaliser
 from climetlab.sources.file import File
+
 import maelstrom
 
 
@@ -88,8 +89,7 @@ class Yr(Dataset):
             "drop_variables": ["static_predictors", "target_std"],
         }
 
-        tf_options = {
-        }
+        tf_options = {}
 
         if not is_url:
             # Use data stored locally
@@ -97,7 +97,9 @@ class Yr(Dataset):
             filenames = list()
             for date in self.dates:
                 hour = self.get_hour_str(date)
-                filenames += glob.glob(location + pattern.format(date=date, hour=hour, **request))
+                filenames += glob.glob(
+                    location + pattern.format(date=date, hour=hour, **request)
+                )
             filenames = [f for f in filenames if os.path.exists(f)]
             self.debug(f"Number of files found {len(filenames)}:")
             self.debug(f"{filenames}")
@@ -109,12 +111,16 @@ class Yr(Dataset):
                 )
 
             self.source = cml.load_source(
-                "multi", files, merger=Merger(x_array_options=x_array_options, tf_options=tf_options)
+                "multi",
+                files,
+                merger=Merger(x_array_options=x_array_options, tf_options=tf_options),
             )
         else:
             # Download from the cloud
             hour = [self.get_hour_str(date) for date in self.dates]
-            request = dict(size=self.size, parameter=self.parameter, date=self.dates, hour=hours)
+            request = dict(
+                size=self.size, parameter=self.parameter, date=self.dates, hour=hours
+            )
             self.debug(f"Request parameters {request}")
             self.source = cml.load_source(
                 "url-pattern",
@@ -156,7 +162,9 @@ class Yr(Dataset):
 
 
 class Merger:
-    def __init__(self, engine="netcdf4", concat_dim="record", x_array_options={}, tf_options={}):
+    def __init__(
+        self, engine="netcdf4", concat_dim="record", x_array_options={}, tf_options={}
+    ):
         self.engine = engine
         self.concat_dim = concat_dim
         self.x_array_options = x_array_options

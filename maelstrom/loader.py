@@ -21,7 +21,6 @@ import maelstrom
 # import horovod.tensorflow as hvd
 
 
-
 def get(args, sample=None):
     """Initialize loader with configuration"""
     name = args["type"]
@@ -949,8 +948,6 @@ class FileLoader(DataLoader):
             num_samples_per_file = 1
             if "sample" in ifile.dimensions:
                 num_samples_per_file = len(ifile.dimensions["sample"])
-            num_x = len(ifile.dimensions["x"])
-            num_y = len(ifile.dimensions["y"])
 
             lats = ifile.variables["latitude"][:]
             lons = ifile.variables["longitude"][:]
