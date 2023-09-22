@@ -9,11 +9,13 @@ import pandas as pd
 import xarray as xr
 from climetlab import Dataset
 from climetlab.decorators import normalize
+from climetlab.sources.file import File
 import maelstrom
+
 
 @normalize("x","date-list(%Y%m%d)")
 def DateListNormaliser(x):
-    return xfrom climetlab.sources.file import File
+    return x
 
 
 class Yr(Dataset):
