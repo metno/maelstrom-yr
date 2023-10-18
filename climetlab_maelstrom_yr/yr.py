@@ -8,10 +8,14 @@ import climetlab as cml
 import pandas as pd
 import xarray as xr
 from climetlab import Dataset
-from climetlab.normalize import DateListNormaliser
+from climetlab.decorators import normalize
 from climetlab.sources.file import File
-
 import maelstrom
+
+
+@normalize("x","date-list(%Y%m%d)")
+def DateListNormaliser(x):
+    return x
 
 
 class Yr(Dataset):
@@ -37,14 +41,15 @@ class Yr(Dataset):
         i.strftime("%Y-%m-%d")
         for i in pd.date_range(start="2021-03-01", end="2022-02-28", freq="1D")
     ]
-    default_datelist = all_datelist
+    all_datelist=DateListNormaliser(all_datelist)
+    default_datelist=all_datelist
 
     def __init__(
         self,
         size,
         parameter,
         dates=None,
-        location="https://object-store.os-api.cci1.ecmwf.int/maelstrom-ap1/",
+        location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
         pattern="{parameter}/{size}/{date}T{hour}Z.nc",
         x_range=None,
         y_range=None,
@@ -132,14 +137,13 @@ class Yr(Dataset):
     @staticmethod
     def parse_dates(dates):
         """Reads dates (e.g. from pandas, or YYYY-MM-DD) and converts them to YYYYMMDD"""
-        dates = DateListNormaliser("%Y-%m-%d")(dates)
+        dates = DateListNormaliser(dates)
         if dates is None:
             dates = Yr.default_datelist
         for d in dates:
             if d not in Yr.all_datelist:
                 print(f"Warning: Date {d} is not available")
         dates = [d for d in dates if d in Yr.all_datelist]
-        dates = DateListNormaliser("%Y%m%d")(dates)
         return dates
 
     def get_hour_str(self, date_str):
