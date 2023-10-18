@@ -9,7 +9,7 @@ def test_read():
     ds = cml.load_dataset(
         "maelstrom-yr",
         size="5GB",
-        dates=["2020-03-01", "2020-03-03"],
+        dates=["2020-03-01", "2020-03-02"],
         location="files/",
         probabilistic_target=False,
         verbose=True,
