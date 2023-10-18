@@ -2,6 +2,5 @@ argparse
 climetlab>=0.17.8
 numpy
 pandas
-tensorflow
 wheel>=0.22
 xarray

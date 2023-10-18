@@ -8,7 +8,6 @@ import climetlab as cml
 import pandas as pd
 import xarray as xr
 import numpy as np
-import tensorflow as tf
 
 from climetlab import Dataset
 from climetlab.decorators import normalize
@@ -239,6 +238,7 @@ class Merger:
 
     def to_tfdataset(self, paths, **kwargs):
         """Returns a tensorflow dataset object"""
+        import tensorflow as tf
         ds = self.to_xarray(paths, **kwargs)
         def gen(pred, target):
             def _gen():

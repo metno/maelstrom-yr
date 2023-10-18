@@ -39,7 +39,6 @@ setuptools.setup(
         "future",
         "numpy",
         "six",
-        "tensorflow",
     ],
     extras_require={
         "test": ["coverage", "pep8"],
