@@ -49,7 +49,7 @@ class Yr(Dataset):
         size,
         parameter,
         dates=None,
-        location="https://storage.ecmwf.europeanweather.cloud/MAELSTROM_AP1/",
+        location="https://object-store.os-api.cci1.ecmwf.int/maelstrom-ap1/",
         pattern="{parameter}/{size}/{date}T{hour}Z.nc",
         x_range=None,
         y_range=None,
