@@ -187,9 +187,9 @@ class Yr(Dataset):
             coords[coord] = ds.variables[coord]
         coords["predictor"] = np.concatenate((ds["predictor"].values, ds["static_predictor"].values))
         if self.probabilistic_target:
-            coords["target"] = np.array(["mean", "std"], np.object)
+            coords["target"] = np.array(["mean", "std"], object)
         else:
-            coords["target"] = np.array(["mean"], np.object)
+            coords["target"] = np.array(["mean"], object)
 
         # Copy variables from input
         data_vars = dict()
