@@ -5,7 +5,6 @@ import pandas as pd
 
 from climetlab_maelstrom_yr.yr import Yr
 
-
 def test_read():
     ds = cml.load_dataset(
         "maelstrom-yr",
@@ -14,7 +13,8 @@ def test_read():
         parameter="air_temperature",
         location="files/",
     )
-    q = ds.to_tfdataset()
+    # q = ds.to_tfdataset()
+    q = ds.to_xarray()
 
 
 def test_parse_dates():
@@ -28,4 +28,4 @@ if __name__ == "__main__":
     from climetlab.testing import main
 
     test_read()
-    main(globals())
+    test_parse_dates()
