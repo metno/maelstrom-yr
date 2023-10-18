@@ -9,11 +9,11 @@ def test_read():
     ds = cml.load_dataset(
         "maelstrom-yr",
         size="5GB",
-        dates=["2020-03-01"],
-        parameter="air_temperature",
+        dates=["2020-03-01", "2020-03-03"],
         location="files/",
+        probabilistic_target=False,
+        verbose=True,
     )
-    # q = ds.to_tfdataset()
     q = ds.to_xarray()
 
 
