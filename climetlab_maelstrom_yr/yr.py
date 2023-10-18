@@ -68,7 +68,7 @@ class Yr(Dataset):
             pattern (str): Pattern for filenames
             verbose (bool): Show debug statements if True
         """
-        if size not in ["300MB", "5GB"]:
+        if size not in ["5GB", "5TB"]:
             raise ValueError("invalid size '{size}'")
 
         if parameter not in ["air_temperature", "precipitation_amount"]:
@@ -122,7 +122,7 @@ class Yr(Dataset):
             )
         else:
             # Download from the cloud
-            hour = [self.get_hour_str(date) for date in self.dates]
+            hours = [self.get_hour_str(date) for date in self.dates]
             request = dict(
                 size=self.size, parameter=self.parameter, date=self.dates, hour=hours
             )
