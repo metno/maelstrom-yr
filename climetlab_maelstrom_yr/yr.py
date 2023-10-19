@@ -86,6 +86,7 @@ class Yr(Dataset):
             # Without this, fails with pandas 1.3.1
             # "drop_variables": ["static_predictors", "target_std"],
             # Run preprocess steps on each netCDF file 
+            # "decode_timedelta": False,
             "preprocess": self.preprocess,
         }
         tf_options = {}
@@ -228,7 +229,7 @@ class Yr(Dataset):
 
 class Merger:
     def __init__(
-        self, engine="netcdf4", concat_dim="record", x_array_options={}, tf_options={}
+        self, engine="netcdf4", concat_dim="time", x_array_options={}, tf_options={}
     ):
         self.engine = engine
         self.concat_dim = concat_dim
