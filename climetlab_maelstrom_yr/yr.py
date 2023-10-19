@@ -49,6 +49,7 @@ class Yr(Dataset):
         limit_predictors=None,
         probabilistic_target=False,
         normalize=False,
+        predict_diff=False,
         verbose=False,
     ):
         """
@@ -60,6 +61,8 @@ class Yr(Dataset):
             pattern (str): Pattern for filenames
             probabilistic_target (bool): If true, include target std as the second target parameter
             normalize (bool): If true, normalize the data
+            predict_diff (bool): If true, change the target to be the difference between the target
+                and raw forecast
             verbose (bool): Show debug statements if True
         """
         if size not in ["5GB", "5TB"]:
@@ -70,8 +73,9 @@ class Yr(Dataset):
 
         self.size = size
         self.parameter = parameter
-        self.do_normalize = normalize
         self.probabilistic_target = probabilistic_target
+        self.do_normalize = normalize
+        self.do_predict_diff = predict_diff
         self.verbose = verbose
 
         is_url = location.find("://") >= 0
@@ -243,6 +247,10 @@ class Yr(Dataset):
             data_vars["targets"] = (("leadtime", "y", "x", "target"), targets)
         else:
             data_vars["targets"] = (("leadtime", "y", "x", "target"), np.expand_dims(ds.variables["target_mean"], -1))
+
+        if self.do_predict_diff:
+            I = np.where(coords["predictor"] == "air_temperature_2m")[0][0]
+            data_vars["targets"][1][..., 0] -= data_vars["predictors"][1][..., I]
 
         if self.do_normalize:
             for i, name in enumerate(coords["predictor"]):

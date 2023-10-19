@@ -19,8 +19,11 @@ def test_read():
     )
     ds = cmlds.to_xarray()
     I = np.where(ds["predictor"] == "air_temperature_2m")[0][0]
-    value0 = ds["predictors"][0, 0, 0, 0, I].values
-    np.testing.assert_almost_equal(value0, 0.33352637)
+    value = ds["predictors"][0, 0, 0, 0, I].values
+    np.testing.assert_almost_equal(value, 0.33352637)
+
+    value = ds["targets"][0, 0, 0, 0, 0].values
+    np.testing.assert_almost_equal(value, 0.3591344)
 
 def test_normalize_dataset():
     cmlds = cml.load_dataset(
@@ -29,19 +32,23 @@ def test_normalize_dataset():
         dates=["2020-03-01", "2020-03-02"],
         # location=f"{dir}/",
         probabilistic_target=False,
+        predict_diff=True,
         normalize=True,
     )
     ds = cmlds.to_xarray()
     I = np.where(ds["predictor"] == "air_temperature_2m")[0][0]
-    value0 = ds["predictors"][0, 0, 0, 0, I].values
-    np.testing.assert_almost_equal(value0, (0.33352637 - 5.388952960570653)/7.4335476655246735)
+    value = ds["predictors"][0, 0, 0, 0, I].values
+    np.testing.assert_almost_equal(value, (0.33352637 - 5.388952960570653)/7.4335476655246735)
+
+    # Check that the target has been normalized by air_temperature_2m
+    value = ds["targets"][0, 0, 0, 0, 0].values
+    np.testing.assert_almost_equal(value, 0.3591344 - 0.33352637)
 
 def test_normalize_functions():
     ar = np.array([0, 1, 2], np.float32)
     Yr.normalize(ar, "air_temperature_2m")
     Yr.denormalize(ar, "air_temperature_2m")
     np.testing.assert_array_almost_equal(ar, [0, 1, 2])
-
 
 
 if __name__ == "__main__":
