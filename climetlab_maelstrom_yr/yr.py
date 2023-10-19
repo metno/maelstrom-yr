@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import glob
 import os
+import collections
 
 import climetlab as cml
 import pandas as pd
@@ -47,7 +48,7 @@ class Yr(Dataset):
         limit_leadtimes=None,
         limit_predictors=None,
         probabilistic_target=False,
-        normalization=None,
+        normalize=False,
         verbose=False,
     ):
         """
@@ -58,7 +59,7 @@ class Yr(Dataset):
             location (str): Storage location (URL, or local file directory)
             pattern (str): Pattern for filenames
             probabilistic_target (bool): If true, include target std as the second target parameter
-            normalization (bool): If true, normalize the data
+            normalize (bool): If true, normalize the data
             verbose (bool): Show debug statements if True
         """
         if size not in ["5GB", "5TB"]:
@@ -69,7 +70,7 @@ class Yr(Dataset):
 
         self.size = size
         self.parameter = parameter
-        self.normalization = normalization
+        self.do_normalize = normalize
         self.probabilistic_target = probabilistic_target
         self.verbose = verbose
 
@@ -150,6 +151,26 @@ class Yr(Dataset):
         all_datelist=DateListNormaliser(all_datelist)
         return all_datelist
 
+    @classmethod
+    def get_normalization(cls):
+        """Returns a dictionary with normalization coefficients (mean, std)"""
+        normalization = collections.defaultdict(lambda: [0.0, 1.0])
+        normalization["air_temperature_0.1_2m"] = [4.725014929970105, 7.566987847083937]
+        normalization["air_temperature_0.9_2m"] = [6.112570554018021, 7.521962731122694]
+        normalization["air_temperature_2m"] = [5.388952960570653, 7.4335476655246735]
+        normalization["bias_yesterday"] = [-0.07066702128698428, 0.7485341580688785]
+        normalization["cloud_area_fraction"] = [0.6884219621618589, 0.40055377741854187]
+        normalization["precipitation_amount"] = [0.07837766820254426, 0.36662233737977684]
+        normalization["x_wind_10m"] = [0.4250524006783962, 4.6850994324021595]
+        normalization["y_wind_10m"] = [-0.7272756993770599, 5.11310843905376]
+        normalization["altitude"] = [110.0174789428711, 218.2789258799505]
+        normalization["analysis_std"] = [0.5121386324365934, 0.40215385148028904]
+        normalization["bias_recent"] = [-0.007340590585954487, 0.5344001060184195]
+        normalization["land_area_fraction"] = [0.45299264788627625, 0.49328521353773686]
+        normalization["model_altitude"] = [109.62958717346191, 213.4803743151553]
+        normalization["model_laf"] = [0.43093839287757874, 0.48621477236654775]
+        return normalization
+
     @property
     def datestr(self):
         strings = list()
@@ -223,8 +244,25 @@ class Yr(Dataset):
         else:
             data_vars["targets"] = (("leadtime", "y", "x", "target"), np.expand_dims(ds.variables["target_mean"], -1))
 
+        if self.do_normalize:
+            for i, name in enumerate(coords["predictor"]):
+                Yr.normalize(data_vars["predictors"][1][..., i], name)
+
         new_ds = xr.Dataset(data_vars, coords)
         return new_ds
+
+    @staticmethod
+    def denormalize(array, name):
+        array *= Yr.get_normalization()[name][1]
+        array += Yr.get_normalization()[name][0]
+
+    @staticmethod
+    def normalize(array, name):
+        if not isinstance(name, str):
+            raise TypeError("name must be type 'str'")
+
+        array -= Yr.get_normalization()[name][0]
+        array /= Yr.get_normalization()[name][1]
 
 
 class Merger:
