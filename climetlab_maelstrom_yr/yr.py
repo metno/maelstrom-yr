@@ -35,16 +35,6 @@ class Yr(Dataset):
         "If you do not agree with such terms, do not download the data. "
     )
 
-    all_datelist = [
-        i.strftime("%Y-%m-%d")
-        for i in pd.date_range(start="2020-03-01", end="2021-02-28", freq="1D")
-    ] + [
-        i.strftime("%Y-%m-%d")
-        for i in pd.date_range(start="2021-03-01", end="2022-02-28", freq="1D")
-    ]
-    all_datelist=DateListNormaliser(all_datelist)
-    default_datelist=all_datelist
-
     def __init__(
         self,
         size,
@@ -86,9 +76,7 @@ class Yr(Dataset):
         is_url = location.find("://") >= 0
         self.debug(f"Is this a URL dataset? {is_url}")
 
-        if dates is None:
-            dates = self.default_datelist
-        self.dates = self.parse_dates(dates)
+        self.dates = self.get_available_dates(dates)
         self.debug(f"Number of dates to load {len(self.dates)}")
 
         x_array_options = {
@@ -140,6 +128,27 @@ class Yr(Dataset):
                 merger=merger,
             )
 
+    @classmethod
+    def get_all_dates(cls):
+        """Returns all available dates (list of strings in format YYYYMMDD)"""
+        all_datelist = [
+            i.strftime("%Y-%m-%d")
+            for i in pd.date_range(start="2020-03-01", end="2021-02-28", freq="1D")
+        ] + [
+            i.strftime("%Y-%m-%d")
+            for i in pd.date_range(start="2021-03-01", end="2022-02-28", freq="1D")
+        ]
+
+        # Remove missing dates
+        all_datelist.remove("2020-05-22")
+        all_datelist.remove("2020-05-26")
+        all_datelist.remove("2020-05-30")
+        all_datelist.remove("2020-08-05")
+        all_datelist.remove("2021-08-05")
+        all_datelist.remove("2022-01-15")
+        all_datelist=DateListNormaliser(all_datelist)
+        return all_datelist
+
     @property
     def datestr(self):
         strings = list()
@@ -148,15 +157,16 @@ class Yr(Dataset):
         return strings
 
     @staticmethod
-    def parse_dates(dates):
+    def get_available_dates(dates):
         """Reads dates (e.g. from pandas, or YYYY-MM-DD) and converts them to YYYYMMDD"""
         dates = DateListNormaliser(dates)
         if dates is None:
-            dates = Yr.default_datelist
-        for d in dates:
-            if d not in Yr.all_datelist:
-                print(f"Warning: Date {d} is not available")
-        dates = [d for d in dates if d in Yr.all_datelist]
+            dates = Yr.get_all_dates()
+        else:
+            for d in dates:
+                if d not in Yr.get_all_dates():
+                    print(f"Warning: Date {d} is not available")
+            dates = [d for d in dates if d in Yr.get_all_dates()]
         return dates
 
     def get_hour_from_date(self, date_str):
