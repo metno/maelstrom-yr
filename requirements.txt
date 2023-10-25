@@ -1,5 +1,5 @@
 argparse
-climetlab>=0.17.8
+climetlab>=0.9.0
 numpy
 pandas
 wheel>=0.22

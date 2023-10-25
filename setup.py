@@ -35,7 +35,7 @@ setuptools.setup(
     install_requires=[
         "argparse",
         "datetime",
-        "climetlab>=0.17.8",
+        "climetlab>=0.9.0",
         "future",
         "numpy",
         "six",
